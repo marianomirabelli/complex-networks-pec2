@@ -30,6 +30,8 @@ def generate_erdos_renyi(g,p):
 
 def draw_bar(degrees, probabilites,probability_axis):
     plt.bar(degrees, probabilites, width=0.80, color='r')
+    max_degree = max(degrees)
+    plt.xlim(0, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
     plt.show()
