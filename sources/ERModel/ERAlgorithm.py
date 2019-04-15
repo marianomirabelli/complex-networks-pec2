@@ -1,7 +1,7 @@
+from __future__ import division
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
-import collections
 import math
 from scipy.special import comb
 
@@ -28,22 +28,26 @@ def generate_erdos_renyi(g,p):
                 if(r<=p and (not g.has_edge(j,i))):
                     g.add_edge(i,j)
 
-def draw_bar(degrees, probabilites):
-    plt.bar(degrees, probabilites, width=0.80, color='b')
+def draw_bar(degrees, probabilites,probability_axis):
+    plt.bar(degrees, probabilites, width=0.80, color='r')
     plt.gca().set_xlabel("Degree")
-    plt.gca().set_ylabel("Binomial P(K)")
+    plt.gca().set_ylabel(probability_axis)
     plt.show()
 
 
 def draw_theoretical_degree_distribution(g,p):
-    degree_sequence = sorted([d for n, d in g.degree()], reverse=True)
+    degree_sequence = sorted(set([d for n, d in g.degree()]),reverse=True)
     n = len(g)
-    probabilities_list = list()
+    poisson_probabilities_list = list()
+    binomial_probabilities_list = list()
     for degree in degree_sequence:
-        probabilities_list.append(comb(n-1,degree)
-                                  *(math.pow(p,degree))
-                                  *(math.pow(1-p,(n-1-degree))))
-    draw_bar(degree_sequence,probabilities_list)
+        binomial_probability =comb(n-1,degree)*(math.pow(p,degree))*(math.pow(1-p,(n-1-degree)))
+        poisson_probability = (math.pow(n*p,degree) * math.pow(math.e,-(n*p))/math.factorial(degree))
+        poisson_probabilities_list.append(poisson_probability)
+        binomial_probabilities_list.append(binomial_probability)
+    draw_bar(degree_sequence,binomial_probabilities_list,'Binomial P(K)')
+    draw_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)')
+
 
 
 def main():
