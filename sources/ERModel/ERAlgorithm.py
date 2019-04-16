@@ -7,6 +7,13 @@ import math
 from scipy.special import comb
 
 
+def div_d(my_dict,constant):
+
+    for i in my_dict:
+        my_dict[i] = float(my_dict[i]/constant)
+
+    return my_dict
+
 def draw_graph(g):
     layout = nx.random_layout(g)
     nx.draw_networkx(g, layout, False, False)
@@ -31,10 +38,11 @@ def generate_erdos_renyi(g,p):
 
 def draw_bar(degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
+    min_degree = min(degrees)
     max_degree = max(degrees)
-    xi = [i for i in range(0, max_degree)]
+    xi = [i for i in range(min_degree, max_degree)]
     plt.xticks(xi, degrees)
-    plt.xlim(0, max_degree)
+    plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
     plt.show()
@@ -56,14 +64,10 @@ def draw_theoretical_degree_distribution(g,p):
 def draw_empirical_degree_distribution(g):
     degree_sequence = sorted(list([d for n, d in g.degree()]))
     n = len(g)
-    probability_list = list()
-    degree_list = list()
-    degreeFecTuple = collections.Counter(degree_sequence)
-    for degree, frequency in degreeFecTuple.iteritems():
-        current_degree_probability = frequency/n
-        degree_list.append(degree)
-        probability_list.append(current_degree_probability)
-    draw_bar(degree_list,probability_list,'P(K)','g')
+    degree_fec_tuple = collections.Counter(degree_sequence)
+    degree_fec_tuple = div_d(degree_fec_tuple,float(n))
+    degree, probabilities = zip(*degree_fec_tuple.items())
+    draw_bar(degree,probabilities,'P(K)','g')
 
 
 def main():
