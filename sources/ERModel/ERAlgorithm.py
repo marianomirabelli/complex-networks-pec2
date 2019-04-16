@@ -1,4 +1,5 @@
 from __future__ import division
+import collections
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
@@ -53,13 +54,16 @@ def draw_theoretical_degree_distribution(g,p):
     draw_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
 
 def draw_empirical_degree_distribution(g):
-    degree_sequence = sorted(set([d for n, d in g.degree()]))
+    degree_sequence = sorted(list([d for n, d in g.degree()]))
     n = len(g)
     probability_list = list()
-    for degree in degree_sequence:
-        current_degree_probability = degree/n
+    degree_list = list()
+    degreeFecTuple = collections.Counter(degree_sequence)
+    for degree, frequency in degreeFecTuple.iteritems():
+        current_degree_probability = frequency/n
+        degree_list.append(degree)
         probability_list.append(current_degree_probability)
-    draw_bar(degree_sequence,probability_list,'P(K)','g')
+    draw_bar(degree_list,probability_list,'P(K)','g')
 
 
 def main():
