@@ -40,7 +40,7 @@ def draw_bar(degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
-    xi = [i for i in range(min_degree, max_degree)]
+    xi = range(0, max_degree,20)
     plt.xticks(xi, degrees)
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
@@ -55,11 +55,11 @@ def draw_theoretical_degree_distribution(g,p):
     binomial_probabilities_list = list()
     for degree in degree_sequence:
         binomial_probability =comb(n-1,degree)*(math.pow(p,degree))*(math.pow(1-p,(n-1-degree)))
-        poisson_probability = (math.pow(n*p,degree) * math.pow(math.e,-(n*p))/math.factorial(degree))
-        poisson_probabilities_list.append(poisson_probability)
+#       poisson_probability = (math.pow(n*p,degree) * math.pow(math.e,-(n*p))/math.factorial(degree))
+#        poisson_probabilities_list.append(poisson_probability)
         binomial_probabilities_list.append(binomial_probability)
     draw_bar(degree_sequence,binomial_probabilities_list,'Binomial P(K)','b')
-    draw_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
+#    draw_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
 
 def draw_empirical_degree_distribution(g):
     degree_sequence = sorted(list([d for n, d in g.degree()]))
@@ -75,7 +75,7 @@ def main():
     p = float(raw_input('Enter the probability '))
     graph = create_graph(n)
     generate_erdos_renyi(graph, p)
-    draw_graph(graph)
+    #draw_graph(graph)
     draw_theoretical_degree_distribution(graph,p)
     draw_empirical_degree_distribution(graph)
 
