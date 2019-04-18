@@ -77,5 +77,12 @@ def generate_barbasi_albert(N, seed_nodes, edges_per_new_node):
     return graph
 
 
-generatedGraph = generate_barbasi_albert(10,5,4)
-draw_graph(generatedGraph)
+
+def main():
+    nodes = int(raw_input('Enter the number of nodes '))
+    seed_nodes = int(raw_input('Enter the number of nodes '))
+    edges_per_node = int(raw_input('Enter the number of edges per node '))
+    graph = generate_barbasi_albert(nodes,seed_nodes,edges_per_node)
+    draw_graph(graph)
+
+main()
