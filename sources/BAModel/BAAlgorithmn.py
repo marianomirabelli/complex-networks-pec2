@@ -57,8 +57,10 @@ def generate_barbasi_albert(N, seed_nodes, edges_per_new_node):
             aux_max_bin = current_min + degree
             bin_map[node] = BinRange(current_min, aux_max_bin)
             current_min = aux_max_bin
+
         sorted_bin_map = sorted(bin_map.items(), key=operator.itemgetter(1))
         graph.add_node(current_new_node)
+
         while(generated_edges < edges_per_new_node):
 
             probability = random.random() * degree_sumatory
@@ -66,7 +68,9 @@ def generate_barbasi_albert(N, seed_nodes, edges_per_new_node):
             for node, bin_range in sorted_bin_map:
 
                 if (bin_range.min <= probability < bin_range.max ):
+
                     if(not(graph.has_edge(current_new_node,node))):
+
                         generated_edges = generated_edges + 1
                         graph.add_edge(current_new_node,node)
                         break
