@@ -18,6 +18,7 @@ class BinRange:
     def __cmp__(self, other):
         return cmp(self.min, other.min)
 
+
 def draw_graph(g):
     layout = nx.random_layout(g)
     nx.draw_networkx(g, layout, False, False)

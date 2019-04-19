@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import random
 import math
+import numpy as np
 from scipy.special import comb
 
 
@@ -36,12 +37,23 @@ def generate_erdos_renyi(g,p):
                 if(r<=p and (not g.has_edge(j,i))):
                     g.add_edge(i,j)
 
-def draw_bar(degrees, probabilites,probability_axis,color):
+def draw_empirical_bar(degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
-    xi = range(0, max_degree,20)
-    plt.xticks(xi, degrees)
+    plt.xticks(np.arange(min_degree,max_degree,10))
+    plt.xlim(min_degree, max_degree)
+    plt.gca().set_xlabel("Degree")
+    plt.gca().set_ylabel(probability_axis)
+    plt.show()
+
+
+def draw_theoretical_bar(degrees, probabilites,probability_axis,color):
+    plt.bar(degrees, probabilites, width=0.80, color=color)
+    min_degree = min(degrees)
+    max_degree = max(degrees)
+    plt.xticks(np.arange(min_degree,max_degree,2))
+    plt.yticks(np.arange(0,0.15,0.01))
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
@@ -55,11 +67,12 @@ def draw_theoretical_degree_distribution(g,p):
     binomial_probabilities_list = list()
     for degree in degree_sequence:
         binomial_probability =comb(n-1,degree)*(math.pow(p,degree))*(math.pow(1-p,(n-1-degree)))
-#       poisson_probability = (math.pow(n*p,degree) * math.pow(math.e,-(n*p))/math.factorial(degree))
-#        poisson_probabilities_list.append(poisson_probability)
+        poisson_probability = (math.pow(n*p,degree) * math.pow(math.e,-(n*p))/math.factorial(degree))
+        poisson_probabilities_list.append(poisson_probability)
         binomial_probabilities_list.append(binomial_probability)
-    draw_bar(degree_sequence,binomial_probabilities_list,'Binomial P(K)','b')
-#    draw_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
+
+    draw_theoretical_bar(degree_sequence,binomial_probabilities_list,'Binomial P(K)','b')
+    draw_theoretical_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
 
 def draw_empirical_degree_distribution(g):
     degree_sequence = sorted(list([d for n, d in g.degree()]))
@@ -67,7 +80,7 @@ def draw_empirical_degree_distribution(g):
     degree_fec_tuple = collections.Counter(degree_sequence)
     degree_fec_tuple = div_d(degree_fec_tuple,float(n))
     degree, probabilities = zip(*degree_fec_tuple.items())
-    draw_bar(degree,probabilities,'P(K)','g')
+    draw_empirical_bar(degree,probabilities,'P(K)','g')
 
 
 def main():
