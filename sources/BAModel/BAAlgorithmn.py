@@ -114,6 +114,22 @@ def calculate_distribution_empirical_exponent(degree_sequence,nodes):
     exponent = 1 + nodes*(math.pow(sum,-1))
     return exponent
 
+def draw_theoretical_distribution(degree_sequence):
+    probability_list = list()
+    degree_list = list()
+    for degree in set(degree_sequence):
+        degree_list.append(degree)
+        probability_list.append(math.pow(degree,-3))
+    plt.bar(degree_list, probability_list, width=0.80, color='y')
+    min_degree = min(degree_sequence)
+    max_degree = max(degree_sequence)
+    plt.xticks(np.arange(min_degree, max_degree, 5))
+    plt.xlim(min_degree, max_degree)
+    plt.gca().set_xlabel("Degree")
+    plt.gca().set_ylabel('P(X)')
+    plt.show()
+
+
 
 
 def generate_barbasi_albert(N, seed_nodes, edges_per_new_node):
@@ -176,6 +192,7 @@ def main():
         graph = generate_barbasi_albert(nodes,seed_nodes,edges_per_node)
         degree_sequence = sorted(list([d for n, d in graph.degree()]))
         draw_graph(graph)
+        draw_theoretical_distribution(degree_sequence)
         draw_log_scale_empirical_degree_distribution(degree_sequence,len(graph))
         draw_empirical_degree_distribution(degree_sequence,len(graph))
         print ('Empirical Distribution Exponent :',calculate_distribution_empirical_exponent(degree_sequence,len(graph)))
