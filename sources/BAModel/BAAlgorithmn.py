@@ -145,9 +145,7 @@ def generate_barbasi_albert(N, seed_nodes, edges_per_new_node):
     total_nodes = graph.number_of_nodes()
     for i in nodes:
         for j in nodes:
-            if (i != j):
-                if (not graph.has_edge(j, i)):
-                    graph.add_edge(i, j)
+               graph.add_edge(i, j)
 
     while(graph.number_of_nodes() < N):
 
