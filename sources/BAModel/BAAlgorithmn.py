@@ -49,10 +49,11 @@ def draw_empirical_degree_distribution(g):
         log_degree_sequence.append(np.log(degree))
 
     #Divide the interval log_min_degree - log_max_degree in bines
-    bin_divider = (log_max_degree - log_min_degree)/5
+    bin_divider = (log_max_degree - log_min_degree)/10
     current_min_limit = log_min_degree
     log_bins = collections.OrderedDict()
     log_bin_degree_list = collections.OrderedDict()
+
     while(current_min_limit<log_max_degree):
         log_bins[current_min_limit]=0
         log_bin_degree_list[current_min_limit] = list()
@@ -62,12 +63,18 @@ def draw_empirical_degree_distribution(g):
 
     #Count how many elements of log(k) has into a specific bin
     for degree in log_degree_sequence:
-       for bin in log_bins:
-           if (degree < bin):
-               log_bins[bin]+=1
-               log_bin_degree_list.get(bin).append(degree)
-               break
-
+        bines = iter(log_bins.keys())
+        current_min = bines.next()
+        has_next = True
+        while(has_next):
+            try:
+                current_max = bines.next()
+                if(current_min <= degree < current_max):
+                    log_bins[current_min]+=1
+                    break
+                current_min = current_max
+            except StopIteration:
+                has_next= False
 
     #Divide the numbers of element by bin by the graph size
     probability_list = list()
@@ -78,8 +85,8 @@ def draw_empirical_degree_distribution(g):
 
     plt.bar(degree_distribution, probability_list, width=bin_divider, color='r')
     plt.yticks(np.arange(0, 1, 0.10))
-    plt.xticks(np.arange(log_min_degree+bin_divider, log_max_degree, bin_divider))
-    plt.xlim(log_min_degree+bin_divider, log_max_degree)
+    plt.xticks(np.arange(log_min_degree, log_max_degree, bin_divider))
+    plt.xlim(log_min_degree, log_max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel("P(K)")
     plt.show()
@@ -93,10 +100,11 @@ def draw_empirical_bar(degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
+    plt.xscale('log')
     plt.yticks(np.arange(0,1,0.10))
     plt.xticks(np.arange(min_degree,max_degree,5))
     plt.xlim(min_degree, max_degree)
-    plt.gca().set_xlabel("Degree")
+    plt.gca().set_xlabel("Range Log(min(degre) - Log(max(degree))")
     plt.gca().set_ylabel(probability_axis)
     plt.show()
 
@@ -155,11 +163,12 @@ def generate_barbasi_albert(N, seed_nodes, edges_per_new_node):
 
 
 def main():
-    nodes = int(raw_input('Enter the number of nodes '))
-    seed_nodes = int(raw_input('Enter the number of initial nodes '))
-    edges_per_node = int(raw_input('Enter the number of edges per node '))
-    graph = generate_barbasi_albert(nodes,seed_nodes,edges_per_node)
-#    draw_graph(graph)
-    draw_empirical_degree_distribution(graph)
+    while(True):
+        nodes = int(raw_input('Enter the number of nodes '))
+        seed_nodes = int(raw_input('Enter the number of initial nodes '))
+        edges_per_node = int(raw_input('Enter the number of edges per node '))
+        graph = generate_barbasi_albert(nodes,seed_nodes,edges_per_node)
+    #    draw_graph(graph)
+        draw_empirical_degree_distribution(graph)
 
 main()
