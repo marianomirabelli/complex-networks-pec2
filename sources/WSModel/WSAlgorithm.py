@@ -8,11 +8,6 @@ import numpy as np
 from scipy.special import comb
 
 
-def get_index_range(index, length):
-  trim = index % length;
-  nonNegative = trim + length;
-  return nonNegative % length;
-
 def draw_graph(g):
     layout = nx.circular_layout(g)
     nx.draw_networkx(g, layout, False, False)
@@ -25,7 +20,7 @@ def div_d(my_dict,constant):
 
     return my_dict
 
-def draw_empirical_degree_distribution(degree_sequence,n):
+def draw_empirical_degree_distribution(n,p,k,degree_sequence):
     degree_fec_tuple = collections.Counter(degree_sequence)
     degree_fec_tuple = div_d(degree_fec_tuple,float(n))
     degree, probabilities = zip(*degree_fec_tuple.items())
@@ -37,6 +32,7 @@ def draw_empirical_degree_distribution(degree_sequence,n):
     plt.ylim(0, 1)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel('P(X)')
+    plt.savefig("results/ws_empirical_"+str(n)+"_"+str(p)+"_"+str(k)+".png")
     plt.show()
 
 
@@ -64,6 +60,7 @@ def draw_theoretical_degree_distribution(degree_sequence,n,k,p):
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel('P(X)')
+    plt.savefig("results/ws_theoretical_"+str(n)+"_"+str(p)+"_"+str(k)+".png")
     plt.show()
 
 
@@ -114,8 +111,9 @@ def main():
         graph = generate_watts_strogatz(nodes,k,p)
         draw_graph(graph)
         degree_sequence = sorted(list([d for n, d in graph.degree()]))
-        draw_empirical_degree_distribution(degree_sequence,nodes)
+        draw_empirical_degree_distribution(nodes,p,k,degree_sequence)
         draw_theoretical_degree_distribution(degree_sequence,nodes,k,p)
+        nx.write_pajek(graph,"results/ws_graph_"+str(n)+"_"+str(p)+"_"+str(k)+".net")
 main()
 
 
