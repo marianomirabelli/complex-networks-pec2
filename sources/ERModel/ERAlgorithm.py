@@ -15,9 +15,10 @@ def div_d(my_dict,constant):
 
     return my_dict
 
-def draw_graph(g):
+def draw_graph(g,n,p):
     layout = nx.random_layout(g)
     nx.draw_networkx(g, layout, False, False)
+    plt.savefig("results/er_graph_"+str(n)+"_"+str(p)+".png")
     plt.show()
 
 
@@ -91,7 +92,7 @@ def main():
         p = float(raw_input('Enter the probability '))
         graph = create_graph(n)
         generate_erdos_renyi(graph, p)
-        draw_graph(graph)
+        draw_graph(graph,n,p)
         draw_theoretical_degree_distribution(graph,p)
         draw_empirical_degree_distribution(graph,p)
         nx.write_pajek(graph,"results/er_graph_"+str(n)+"_"+str(p)+".net")

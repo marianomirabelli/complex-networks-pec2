@@ -8,9 +8,10 @@ import numpy as np
 from scipy.special import comb
 
 
-def draw_graph(g):
+def draw_graph(g,n,p,k):
     layout = nx.circular_layout(g)
     nx.draw_networkx(g, layout, False, False)
+    plt.savefig("results/ws_graph_"+str(n)+"_"+str(p)+"_"+str(k)+".png")
     plt.show()
 
 def div_d(my_dict,constant):
@@ -109,7 +110,7 @@ def main():
         k = int(raw_input('Enter the number of edges per nodes '))
         p = float(raw_input('Enter the probability'))
         graph = generate_watts_strogatz(nodes,k,p)
-        draw_graph(graph)
+        draw_graph(graph,nodes,p,k)
         degree_sequence = sorted(list([d for n, d in graph.degree()]))
         draw_empirical_degree_distribution(nodes,p,k,degree_sequence)
         draw_theoretical_degree_distribution(degree_sequence,nodes,k,p)
