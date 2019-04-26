@@ -72,6 +72,9 @@ def draw_theoretical_degree_distribution(degree_sequence,n,k,p):
 def generate_watts_strogatz(n,k,p):
     if k > n:
         raise ValueError('The k value can not be greater than n')
+    if k % 2 !=0:
+        raise ValueError('The k value must be even')
+
     graph = nx.Graph()
     graph.add_nodes_from(i for i in range(n))
     nodes = graph.nodes()
