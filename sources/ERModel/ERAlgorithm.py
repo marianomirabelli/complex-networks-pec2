@@ -37,7 +37,7 @@ def generate_erdos_renyi(g,p):
                 if(r<=p and (not g.has_edge(j,i))):
                     g.add_edge(i,j)
 
-def draw_empirical_bar(degrees, probabilites,probability_axis,color):
+def draw_empirical_bar(n,p,degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
@@ -45,10 +45,11 @@ def draw_empirical_bar(degrees, probabilites,probability_axis,color):
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
+    plt.savefig("results/er_empirical_"+str(n)+"_"+str(p)+".png")
     plt.show()
 
 
-def draw_theoretical_bar(degrees, probabilites,probability_axis,color):
+def draw_theoretical_bar(n,p,type,degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
@@ -57,6 +58,7 @@ def draw_theoretical_bar(degrees, probabilites,probability_axis,color):
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
+    plt.savefig("results/er_theoretical_"+type+"_"+str(n)+"_"+str(p)+".png")
     plt.show()
 
 
@@ -71,27 +73,28 @@ def draw_theoretical_degree_distribution(g,p):
         poisson_probabilities_list.append(poisson_probability)
         binomial_probabilities_list.append(binomial_probability)
 
-    draw_theoretical_bar(degree_sequence,binomial_probabilities_list,'Binomial P(K)','b')
-    draw_theoretical_bar(degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
+    draw_theoretical_bar(n,p,"binomial",degree_sequence,binomial_probabilities_list,'Binomial P(K)','b')
+    draw_theoretical_bar(n,p,"poisson",degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
 
-def draw_empirical_degree_distribution(g):
+def draw_empirical_degree_distribution(g,p):
     degree_sequence = sorted(list([d for n, d in g.degree()]))
     n = len(g)
     degree_fec_tuple = collections.Counter(degree_sequence)
     degree_fec_tuple = div_d(degree_fec_tuple,float(n))
     degree, probabilities = zip(*degree_fec_tuple.items())
-    draw_empirical_bar(degree,probabilities,'P(K)','g')
+    draw_empirical_bar(n,p,degree,probabilities,'P(K)','g')
 
 
 def main():
-    n = int(raw_input('Enter the number of nodes '))
-    p = float(raw_input('Enter the probability '))
-    graph = create_graph(n)
-    generate_erdos_renyi(graph, p)
-    #draw_graph(graph)
-    draw_theoretical_degree_distribution(graph,p)
-    draw_empirical_degree_distribution(graph)
-
+    while(True):
+        n = int(raw_input('Enter the number of nodes '))
+        p = float(raw_input('Enter the probability '))
+        graph = create_graph(n)
+        generate_erdos_renyi(graph, p)
+        draw_graph(graph)
+        draw_theoretical_degree_distribution(graph,p)
+        draw_empirical_degree_distribution(graph,p)
+        nx.write_pajek(graph,"results/er_graph_"+str(n)+"_"+str(p)+".net")
 
 main()
 
