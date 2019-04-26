@@ -28,12 +28,13 @@ def div_d(my_dict,constant):
 
     return my_dict
 
-def draw_graph(g):
+def draw_graph(g,n,seed_nodes,edges_per_node):
     layout = nx.random_layout(g)
     nx.draw_networkx(g, layout, False, False)
+    plt.savefig("results/ba_graph_"+str(n)+"_"+str(seed_nodes)+"_"+str(edges_per_node)+".png")
     plt.show()
 
-def draw_log_scale_empirical_degree_distribution(degree_sequence,nodes):
+def draw_log_scale_empirical_degree_distribution(degree_sequence,nodes,seed_nodes,edges_per_node):
 
     #Find max and min from K
     min_degree = min(degree_sequence)
@@ -87,10 +88,11 @@ def draw_log_scale_empirical_degree_distribution(degree_sequence,nodes):
     plt.xlim(log_min_degree, log_max_degree)
     plt.gca().set_xlabel("Log Scale Degree")
     plt.gca().set_ylabel("P(K)")
+    plt.savefig("results/ba_log_empirical_"+str(nodes)+"_"+str(seed_nodes)+"_"+str(edges_per_node)+".png")
     plt.show()
 
 
-def draw_empirical_degree_distribution(degree_sequence,n):
+def draw_empirical_degree_distribution(degree_sequence,n,seed_nodes,edges_per_node):
     degree_fec_tuple = collections.Counter(degree_sequence)
     degree_fec_tuple = div_d(degree_fec_tuple,float(n))
     degree, probabilities = zip(*degree_fec_tuple.items())
@@ -101,6 +103,7 @@ def draw_empirical_degree_distribution(degree_sequence,n):
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel('P(X)')
+    plt.savefig("results/ba_empirical_"+str(n)+"_"+str(seed_nodes)+"_"+str(edges_per_node)+".png")
     plt.show()
 
 
@@ -114,7 +117,7 @@ def calculate_distribution_empirical_exponent(degree_sequence,nodes):
     exponent = 1 + nodes*(math.pow(sum,-1))
     return exponent
 
-def draw_theoretical_distribution(degree_sequence):
+def draw_theoretical_distribution(degree_sequence,n,seed_nodes,edges_per_node):
     probability_list = list()
     degree_list = list()
     for degree in set(degree_sequence):
@@ -127,6 +130,7 @@ def draw_theoretical_distribution(degree_sequence):
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel('P(X)')
+    plt.savefig("results/ba_theoretical_"+str(n)+"_"+str(seed_nodes)+"_"+str(edges_per_node)+".png")
     plt.show()
 
 
@@ -191,10 +195,11 @@ def main():
         edges_per_node = int(raw_input('Enter the number of edges per node '))
         graph = generate_barbasi_albert(nodes,seed_nodes,edges_per_node)
         degree_sequence = sorted(list([d for n, d in graph.degree()]))
-        draw_graph(graph)
-        draw_theoretical_distribution(degree_sequence)
-        draw_log_scale_empirical_degree_distribution(degree_sequence,len(graph))
-        draw_empirical_degree_distribution(degree_sequence,len(graph))
+        draw_graph(graph,nodes,seed_nodes,edges_per_node)
+        draw_theoretical_distribution(degree_sequence,nodes,seed_nodes,edges_per_node)
+        draw_log_scale_empirical_degree_distribution(degree_sequence,len(graph),seed_nodes,edges_per_node)
+        draw_empirical_degree_distribution(degree_sequence,len(graph),seed_nodes,edges_per_node)
+        nx.write_pajek(graph,"results/ba_graph_"+str(n)+"_"+str(seed_nodes)+"_"+str(edges_per_node)+".net")
         print ('Empirical Distribution Exponent :',calculate_distribution_empirical_exponent(degree_sequence,len(graph)))
 
 main()
