@@ -8,9 +8,6 @@ import numpy as np
 from scipy.special import comb
 
 
-
-
-
 def get_index_range(index, length):
   trim = index % length;
   nonNegative = trim + length;
@@ -42,14 +39,15 @@ def draw_empirical_degree_distribution(degree_sequence,n):
     plt.gca().set_ylabel('P(X)')
     plt.show()
 
+
 def draw_theoretical_degree_distribution(degree_sequence,n,k,p):
-    half_k = k/2
+    half_k = int(k/2)
     degree_list = list()
     probability_list = list()
     for degree in set(degree_sequence):
         probability = 0
-        index = 1
-        min_value = min(degree-half_k,int(half_k))
+        index = 0
+        min_value = min(degree-half_k,half_k)
 
         while(index<=min_value):
             degree_factor = degree - half_k - index
