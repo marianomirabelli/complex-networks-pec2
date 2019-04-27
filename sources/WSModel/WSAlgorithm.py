@@ -32,10 +32,10 @@ def draw_empirical_degree_distribution(n,p,k,degree_sequence):
     degree, probabilities = zip(*degree_fec_tuple.items())
     plt.bar(degree, probabilities, width=0.80, color='b')
     min_degree = min(degree)
-    max_degree = max(degree)
+    max_degree = max(degree) + 1
     plt.xticks(np.arange(min_degree, max_degree, 1))
+    plt.xlim(min_degree,max_degree)
     plt.xlim(min_degree, max_degree)
-    plt.ylim(0, 1)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel('P(X)')
     plt.savefig("results/ws_empirical_"+str(n)+"_"+str(p)+"_"+str(k)+".png")
@@ -61,7 +61,7 @@ def draw_theoretical_degree_distribution(degree_sequence,n,k,p):
 
     plt.bar(degree_list, probability_list, width=0.80, color='y')
     min_degree = min(degree_sequence)
-    max_degree = max(degree_sequence)
+    max_degree = max(degree_sequence) + 1
     plt.xticks(np.arange(min_degree, max_degree, 1))
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
@@ -123,15 +123,12 @@ def main():
         nodes = int(raw_input('Enter the number of nodes '))
         k = int(raw_input('Enter the number of edges per nodes '))
         p = float(raw_input('Enter the probability '))
-        graph_nx = generate_watts_strogatz(nodes,k,p)
-        graph = nx.watts_strogatz_graph(nodes,k,p)
-        draw_graph(graph,nodes,p,k)
-        draw_graph(graph_nx,nodes,p,k)
-       # degree_sequence = sorted(list([d for n, d in graph.degree()]))
-       # draw_empirical_degree_distribution(nodes,p,k,degree_sequence)
-
-        #draw_theoretical_degree_distribution(degree_sequence,nodes,k,p)
-       # nx.write_pajek(graph,"results/ws_graph_"+str(n)+"_"+str(p)+"_"+str(k)+".net")
+        graph =generate_watts_strogatz(nodes,k,p)
+#        draw_graph(graph,nodes,p,k)
+        degree_sequence = sorted(list([d for n, d in graph.degree()]))
+        draw_empirical_degree_distribution(nodes,p,k,degree_sequence)
+        draw_theoretical_degree_distribution(degree_sequence,nodes,k,p)
+        nx.write_pajek(graph,"results/ws_graph_"+str(nodes)+"_"+str(p)+"_"+str(k)+".net")
 main()
 
 
