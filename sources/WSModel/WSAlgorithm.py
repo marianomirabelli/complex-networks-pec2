@@ -101,8 +101,9 @@ def generate_watts_strogatz(n,k,p):
     for i in nodes:
 
         for j in nodes:
+                mod = j%n
 
-                if(graph.has_edge (i,j) and (i < j <= i+half_k)):
+                if(graph.has_edge (i,mod) and (i < j <= i+half_k)):
 
                     current_probability = random.random()
                     if(current_probability<p):
