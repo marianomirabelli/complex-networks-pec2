@@ -8,6 +8,11 @@ import numpy as np
 from scipy.special import comb
 
 
+
+
+
+
+
 def draw_graph(g,n,p,k):
     layout = nx.circular_layout(g)
     nx.draw_networkx(g, layout, False, False)
@@ -65,6 +70,13 @@ def draw_theoretical_degree_distribution(degree_sequence,n,k,p):
     plt.show()
 
 
+
+def getIndexInRange(index, length):
+  trim = index % length;
+  nonNegative = trim + length;
+  return nonNegative % length;
+
+
 def generate_watts_strogatz(n,k,p):
     if k > n:
         raise ValueError('The k value can not be greater than n')
@@ -75,15 +87,16 @@ def generate_watts_strogatz(n,k,p):
     graph.add_nodes_from(i for i in range(n))
     nodes = graph.nodes()
     half_k = k/2
-    connection_constant = (n - half_k)
 
     for i in nodes:
 
-       for j in nodes:
-
-           current_index = abs(i - j)
-           if 0 < current_index%connection_constant <= half_k:
-                graph.add_edge(i,j)
+        offset = 1
+        while(offset<=half_k):
+            clock_wise_index = getIndexInRange(i + offset, n)
+            counter_clock_wise_index =  getIndexInRange(i - offset, n)
+            graph.add_edge(i, clock_wise_index)
+            graph.add_edge(i,counter_clock_wise_index)
+            offset+=1
 
     for i in nodes:
 
@@ -108,13 +121,16 @@ def main():
     while(True):
         nodes = int(raw_input('Enter the number of nodes '))
         k = int(raw_input('Enter the number of edges per nodes '))
-        p = float(raw_input('Enter the probability'))
-        graph = generate_watts_strogatz(nodes,k,p)
+        p = float(raw_input('Enter the probability '))
+        graph_nx = generate_watts_strogatz(nodes,k,p)
+        graph = nx.watts_strogatz_graph(nodes,k,p)
         draw_graph(graph,nodes,p,k)
-        degree_sequence = sorted(list([d for n, d in graph.degree()]))
-        draw_empirical_degree_distribution(nodes,p,k,degree_sequence)
-        draw_theoretical_degree_distribution(degree_sequence,nodes,k,p)
-        nx.write_pajek(graph,"results/ws_graph_"+str(n)+"_"+str(p)+"_"+str(k)+".net")
+        draw_graph(graph_nx,nodes,p,k)
+       # degree_sequence = sorted(list([d for n, d in graph.degree()]))
+       # draw_empirical_degree_distribution(nodes,p,k,degree_sequence)
+
+        #draw_theoretical_degree_distribution(degree_sequence,nodes,k,p)
+       # nx.write_pajek(graph,"results/ws_graph_"+str(n)+"_"+str(p)+"_"+str(k)+".net")
 main()
 
 
