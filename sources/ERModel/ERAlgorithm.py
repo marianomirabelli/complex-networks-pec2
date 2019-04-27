@@ -22,29 +22,26 @@ def draw_graph(g,n,p):
     plt.show()
 
 
-def create_graph(n):
+def generate_erdos_renyi(n,p):
     graph = nx.Graph()
     graph.add_nodes_from(i for i in range(n))
-    return graph
-
-
-def generate_erdos_renyi(g,p):
-
-    nodes = g.nodes()
+    nodes = graph.nodes()
     for i in nodes:
         for j in nodes:
             if(i!=j):
                 r = random.random();
-                if(r<=p and (not g.has_edge(j,i))):
-                    g.add_edge(i,j)
+                if(r<p and (not graph.has_edge(j,i))):
+                    graph.add_edge(i,j)
+    return graph
+
 
 def draw_empirical_bar(n,p,degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
-    plt.xticks(np.arange(min_degree,max_degree,15))
+    plt.xticks(np.arange(min_degree,max_degree,3))
     plt.xlim(min_degree, max_degree)
-    plt.ylim(0,0.05)
+    plt.ylim(0,1)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
     plt.savefig("results/er_empirical_"+str(n)+"_"+str(p)+".png")
@@ -55,8 +52,7 @@ def draw_theoretical_bar(n,p,type,degrees, probabilites,probability_axis,color):
     plt.bar(degrees, probabilites, width=0.80, color=color)
     min_degree = min(degrees)
     max_degree = max(degrees)
-    plt.xticks(np.arange(min_degree,max_degree,5))
-    plt.ylim(0,0.05)
+    plt.xticks(np.arange(min_degree,max_degree,3))
     plt.xlim(min_degree, max_degree)
     plt.gca().set_xlabel("Degree")
     plt.gca().set_ylabel(probability_axis)
@@ -67,16 +63,22 @@ def draw_theoretical_bar(n,p,type,degrees, probabilites,probability_axis,color):
 def draw_theoretical_degree_distribution(g,p):
     degree_sequence = sorted(set([d for n, d in g.degree()]))
     n = len(g)
+    degree_list = list()
     poisson_probabilities_list = list()
     binomial_probabilities_list = list()
+
     for degree in degree_sequence:
-        binomial_probability =comb(n-1,degree)*(math.pow(p,degree))*(math.pow(1-p,(n-1-degree)))
+
+        binomial_probability =comb(n-1,degree)*(p**degree)*((1-p)**(n-1-degree))
+
         poisson_probability = (math.pow(n*p,degree) * math.pow(math.e,-(n*p))/math.factorial(degree))
+
+        degree_list.append(degree)
         poisson_probabilities_list.append(poisson_probability)
         binomial_probabilities_list.append(binomial_probability)
 
-    draw_theoretical_bar(n,p,"binomial",degree_sequence,binomial_probabilities_list,'Binomial P(K)','b')
-    draw_theoretical_bar(n,p,"poisson",degree_sequence,poisson_probabilities_list,'Poisson  P(K)','r')
+    draw_theoretical_bar(n,p,"binomial",degree_list,binomial_probabilities_list,'Binomial P(K)','b')
+    draw_theoretical_bar(n,p,"poisson",degree_list,poisson_probabilities_list,'Poisson  P(K)','r')
 
 def draw_empirical_degree_distribution(g,p):
     degree_sequence = sorted(list([d for n, d in g.degree()]))
@@ -91,10 +93,9 @@ def main():
     while(True):
         n = int(raw_input('Enter the number of nodes '))
         p = float(raw_input('Enter the probability '))
-        graph = create_graph(n)
-        generate_erdos_renyi(graph, p)
-      #  draw_graph(graph,n,p)
-      #  draw_theoretical_degree_distribution(graph,p)
+        graph = generate_erdos_renyi(n, p)
+        draw_graph(graph,n,p)
+        draw_theoretical_degree_distribution(graph,p)
         draw_empirical_degree_distribution(graph,p)
         nx.write_pajek(graph,"results/er_graph_"+str(n)+"_"+str(p)+".net")
 
